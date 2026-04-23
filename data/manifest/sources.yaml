@@ -1,0 +1,15 @@
+# Registro de fuentes de datos externas.
+# Una entrada por cada descarga. Obligatorio antes de usar cualquier archivo de data/raw/.
+#
+# Esquema:
+# - id:               identificador único (ej. bcra_ief_202512)
+#   source:           nombre legible de la fuente
+#   url:              URL de descarga
+#   downloaded_at:    YYYY-MM-DD en que se bajó
+#   snapshot_date:    fecha a la que se refiere el dato
+#   path:             ruta relativa en data/raw/
+#   sha256:           hash del archivo original (zip o xlsx)
+#   license:          licencia o condiciones de uso
+#   notes:            aclaraciones relevantes
+
+sources: []

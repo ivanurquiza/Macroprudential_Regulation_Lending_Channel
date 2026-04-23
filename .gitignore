@@ -1,0 +1,27 @@
+# Data — only folder scaffolding is tracked, not contents
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+.env
+
+# Stata
+*.log
+*.smcl
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
