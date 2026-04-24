@@ -1,3 +1,4 @@
+duckdb
 pandas
 numpy
 pyarrow
@@ -5,3 +6,4 @@ pyreadstat
 openpyxl
 jupyterlab
 pyyaml
+py7zr
