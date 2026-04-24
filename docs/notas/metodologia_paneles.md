@@ -72,6 +72,21 @@ Cada panel largo mantiene la frecuencia en la que el BCRA reporta los datos:
 
 Unir frecuencias (por ejemplo, pegar valores trimestrales al panel mensual con forward-fill) es decisión de análisis, no de construcción. Ocurre en los notebooks de análisis.
 
+### 3.6.bis Convención de signos del balance BCRA
+
+(Esta no era una decisión de investigador sino un hallazgo durante la validación; queda documentada acá porque afecta cualquier análisis sobre `panel_balance_mensual`.)
+
+El BCRA reporta los saldos en `bal_hist.txt` siguiendo **convención contable**:
+- **Activos**: saldo positivo (efectivo, préstamos, títulos).
+- **Pasivos**: saldo **negativo** (depósitos, obligaciones).
+- **Patrimonio neto**: saldo negativo (es de naturaleza acreedora).
+
+Ejemplo: en agosto 2024 las cuentas CERA (que son depósitos, capítulo 31x del pasivo) tienen saldos negativos de ~$540 miles de millones de pesos. La magnitud económica es el `abs()` de esa cifra; el signo es solo convención débito-crédito.
+
+**Implicancia operativa**: para analizar saldos económicos de pasivos hay que tomar `abs(saldo)` o multiplicar por -1 explícitamente. En `panel_balance_agregados` (que viene de `balres/` no de `bal_hist/`) la convención **puede ser distinta** porque ahí los saldos están agrupados a nivel capítulo — verificar caso por caso.
+
+Cuando se construyan tablas de análisis, conviene crear una variable `saldo_economico = abs(saldo)` o aplicar el signo por categoría según el lado del balance (activo/pasivo/PN) usando `dim_cuentas`.
+
 ### 3.7 Conversión a dólares
 
 Los saldos de cuentas en moneda extranjera se reportan en pesos, al tipo de cambio contable BCRA A-3500 de fin de mes. El panel largo preserva los saldos en pesos nominales tal como salen del `balhist.txt`.

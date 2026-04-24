@@ -1,0 +1,68 @@
+categoria,codigo_cuenta_pattern,nivel,moneda,sector,nota
+cera_total,311793,detalle,ars,spnf_residente_pais,CERA Ley 27.743 - pesos residentes en el pais (Com. A 8071)
+cera_total,312183,detalle,ars,spnf_residente_exterior,CERA Ley 27.743 - pesos residentes en el exterior
+cera_total,315794,detalle,me,spnf_residente_pais,CERA Ley 27.743 - moneda extranjera residentes en el pais (cuenta dominante)
+cera_total,316147,detalle,me,spnf_residente_exterior,CERA Ley 27.743 - moneda extranjera residentes en el exterior
+cera_ars,311793,detalle,ars,spnf_residente_pais,CERA en pesos residentes pais
+cera_ars,312183,detalle,ars,spnf_residente_exterior,CERA en pesos residentes exterior
+cera_me,315794,detalle,me,spnf_residente_pais,CERA en USD residentes pais
+cera_me,316147,detalle,me,spnf_residente_exterior,CERA en USD residentes exterior
+cera_residente_pais,311793,detalle,ars,spnf_residente_pais,CERA pesos residentes
+cera_residente_pais,315794,detalle,me,spnf_residente_pais,CERA USD residentes
+cera_residente_exterior,312183,detalle,ars,spnf_residente_exterior,CERA pesos exterior
+cera_residente_exterior,316147,detalle,me,spnf_residente_exterior,CERA USD exterior
+credito_ars_spnf,131%,principal,ars,spnf,Capitulo 131 - Prestamos en pesos al sector privado no financiero (todas las cuentas; las regularizadoras se restan en analisis)
+credito_me_spnf,135%,principal,me,spnf,Capitulo 135 - Prestamos en moneda extranjera al sector privado no financiero
+credito_me_prefinanc_export,135199,detalle,me,spnf,Prefinanciacion y financiacion de exportaciones
+credito_me_prefinanc_export,135499,detalle,me,spnf,Prefinanciacion y financiacion de exportaciones
+credito_me_prefinanc_export,135799,detalle,me,spnf,Prefinanciacion y financiacion de exportaciones
+credito_me_documentos_sola_firma,135115,detalle,me,spnf,Documentos a sola firma
+credito_me_documentos_comprados,135121,detalle,me,spnf,Documentos comprados
+credito_me_hipotecarios,135108,detalle,me,spnf,Prestamos hipotecarios en moneda extranjera
+deposito_ars_spnf,311%,principal,ars,spnf_residente_pais,Capitulo 311 - Depositos pesos residentes en el pais (incluye CERA y especiales)
+deposito_ars_spnf_exterior,312%,principal,ars,spnf_residente_exterior,Capitulo 312 - Depositos pesos residentes en el exterior
+deposito_me_spnf,315%,principal,me,spnf_residente_pais,Capitulo 315 - Depositos moneda extranjera residentes en el pais (incluye CERA)
+deposito_me_spnf_exterior,316%,principal,me,spnf_residente_exterior,Capitulo 316 - Depositos moneda extranjera residentes en el exterior
+deposito_me_cuenta_exportadores,315791,detalle,me,spnf_residente_pais,Cuenta especial para acreditar financiacion de exportaciones
+deposito_ars_cuenta_exportadores,311792,detalle,ars,spnf_residente_pais,Cuenta especial para exportadores en pesos
+deposito_ars_cuenta_agro,311791,detalle,ars,spnf_residente_pais,Cuenta especial para titulares con actividad agricola
+titulos_publicos_ars,121%,principal,ars,publico_y_bcra,Capitulo 121 - Tenencias de titulos publicos en pesos (incluye Tesoro y BCRA)
+titulos_publicos_me,125%,principal,me,publico_y_bcra,Capitulo 125 - Tenencias de titulos publicos en ME (incluye Tesoro USD y Letras BCRA en ME)
+leliq,121056,detalle,ars,bcra,LELIQ - medicion a valor razonable resultados
+leliq,121057,detalle,ars,bcra,LELIQ - medicion a valor razonable ORI
+leliq,121058,detalle,ars,bcra,LELIQ - medicion a costo amortizado
+lefi,121091,detalle,ars,bcra,LEFI - medicion a costo amortizado
+lefi,121092,detalle,ars,bcra,LEFI - medicion a valor razonable resultados
+lefi,121093,detalle,ars,bcra,LEFI - medicion a valor razonable ORI
+letras_bcra_otros,121024,detalle,ars,bcra,Letras BCRA - medicion a valor razonable
+letras_bcra_otros,121025,detalle,ars,bcra,Letras BCRA - por operaciones de pase (de baja 2018)
+letras_bcra_otros,121026,detalle,ars,bcra,Letras BCRA - medicion a costo
+letras_bcra_otros,121041,detalle,ars,bcra,Letras BCRA - segunda medicion
+deuda_bcra_pesos,121024,detalle,ars,bcra,Union temporal LELIQ + LEFI + Letras BCRA varias
+deuda_bcra_pesos,121025,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121026,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121041,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121056,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121057,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121058,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121091,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121092,detalle,ars,bcra,Union temporal
+deuda_bcra_pesos,121093,detalle,ars,bcra,Union temporal
+interbancario_ars,132%,principal,ars,sf,Capitulo 132 - Operaciones interbancarias en pesos (call entre EEFF; pases)
+interbancario_me,136%,principal,me,sf,Capitulo 136 - Operaciones interbancarias en moneda extranjera
+encajes_proxy_ars,111015,detalle,ars,bcra,BCRA cuenta corriente en pesos (proxy de integracion encajes)
+encajes_proxy_ars,111025,detalle,ars,bcra,BCRA cuentas corrientes especiales en pesos
+encajes_proxy_me,115015,detalle,me,bcra,BCRA cuenta corriente en moneda extranjera (proxy de integracion encajes en ME)
+patrimonio_neto_proxy,400000,principal,mixta,patrimonio,Patrimonio Neto contable (capitulo madre 400000)
+patrimonio_neto_proxy,500000,principal,mixta,patrimonio,Resultados acumulados
+patrimonio_neto_proxy,650000,principal,mixta,patrimonio,Otros Resultados Integrales (ORI)
+activos_me_total,115%,principal,me,mixto,Capitulo 115 - Efectivo y depositos en bancos en ME (componente PGNME proxy)
+activos_me_total,116%,principal,me,mixto,Capitulo 116 - Otros activos en ME
+activos_me_total,125%,principal,me,publico,Titulos publicos en ME (componente PGNME proxy)
+activos_me_total,126%,principal,me,mixto,Otros titulos en ME
+activos_me_total,135%,principal,me,spnf,Prestamos en ME al SPNF
+activos_me_total,136%,principal,me,sf,Interbancario ME
+pasivos_me_total,315%,principal,me,spnf_residente_pais,Depositos ME residentes pais (componente PGNME proxy)
+pasivos_me_total,316%,principal,me,spnf_residente_exterior,Depositos ME residentes exterior
+pasivos_me_total,325%,principal,me,spnf,Otros pasivos ME residentes pais
+pasivos_me_total,326%,principal,me,spnf_residente_exterior,Otros pasivos ME residentes exterior

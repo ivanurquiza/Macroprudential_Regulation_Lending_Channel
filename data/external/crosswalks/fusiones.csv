@@ -1,0 +1,12 @@
+codigo_absorbente,nombre_absorbente,codigo_absorbido,nombre_absorbido,fecha_evento,tipo_evento,nota
+00007,Banco de Galicia y Buenos Aires SA,,Compañia Financiera Argentina SA,2010-06-07,absorcion,Adquirio el 95% del paquete accionario de CFA. Pre-2020.
+00007,Banco de Galicia y Buenos Aires SAU,,Banco de Galicia y Buenos Aires SA,2018-10-25,cambio_denominacion,Cambio de denominacion. Pre-2020.
+00007,Banco de Galicia y Buenos Aires SA,,Banco de Galicia y Buenos Aires SAU,2025-06-19,cambio_denominacion,Cambio de denominacion. CAE EN VENTANA 2020+.
+00007,Banco de Galicia y Buenos Aires SA,00150,HSBC Bank Argentina SA,2024-12-XX,absorcion,HSBC vende su negocio retail Argentina a Galicia. CAE EN VENTANA 2020+. Verificar fecha exacta de cierre.
+00285,Banco Macro SA,,Nuevo Banco Bisel SA,2009-08-06,absorcion,Pre-2020.
+00285,Banco Macro SA,,Nuevo Banco Suquia SA,2007-10-16,absorcion,Pre-2020.
+00285,Banco Macro SA,,Banco del Tucuman SA,2019-10-15,absorcion,Pre-2020.
+00285,Banco Macro SA,,Banco BMA SAU,2024-11-19,absorcion,Art 44 inc b LEF. CAE EN VENTANA 2020+.
+00072,Banco Santander Argentina SA,,Citi Retail Argentina,2017-04-XX,absorcion,Pre-2020.
+00015,Industrial and Commercial Bank of China (Argentina) SAU,,Standard Bank Argentina SA,2012-XX-XX,cambio_control,Pre-2020.
+,,00001,Deutsche Bank Aktiengesselschaft,2017-XX-XX,baja_voluntaria,Salida del pais. Pre-2020. No hay absorbente.
