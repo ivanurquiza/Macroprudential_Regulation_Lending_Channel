@@ -152,9 +152,14 @@ Los bancos ven dos flujos cualitativamente distintos según el tamaño del decla
 
 Toda la sección está basada en panel mensual del BCRA (`bal_hist`), 2020-2026, panel pro-forma con consolidación Macro+BMA. Convertido a USD al tipo de cambio mayorista A-3500 de fin de mes.
 
-### 4.1 Magnitud agregada
+**Convención de ventanas usada en esta sección.** Los hechos descriptivos que sólo dependen del peak (composición CERA, distribución entre bancos) son insensibles al horizonte. La asignación del shock dentro del balance, en cambio, depende del horizonte elegido y se reporta en dos ventanas con interpretación distinta:
 
-Saldo total en cuentas CERA, en miles de millones de USD:
+- **Ventana corta** ago-2024 → mar-2025 (≈8 meses): primer mes completo post-shock hasta el último mes pre-salida del cepo (14-abr-2025). Ventana en la que la asignación del activo ME se puede leer mayormente como respuesta del banco al fondeo CERA bajo restricciones binding (encaje 25%, PGNME, menú 2.1). Es la ventana relevante para la identificación del Paso 1 (γ̂_b).
+- **Ventana larga** jun-2024 → ene-2026 (≈19 meses): pre-shock hasta último dato disponible. Mezcla la respuesta inicial al shock con la reasignación posterior bajo el régimen Milei (salida cepo abr-2025, apreciación real, disinflación, baja de tasas en pesos). Útil como descriptivo de la persistencia y del estado terminal del balance, no como evidencia causal del shock CERA.
+
+### 4.1 Magnitud y dinámica del shock administrativo
+
+Saldo total en las cuatro cuentas CERA del plan contable BCRA, en miles de millones de USD:
 
 | Mes | Bancos con saldo | Saldo total CERA (USD B) |
 |---|---:|---:|
@@ -170,9 +175,11 @@ Saldo total en cuentas CERA, en miles de millones de USD:
 
 Composición en el peak: **96.6%** corresponde a la cuenta 315794 (USD residentes país); 3.4% a la cuenta 311793 (ARS residentes país); el resto es marginal.
 
-### 4.2 Persistencia: la CERA se transforma en depósitos USD regulares
+Esto es lo que la regulación "ve" como CERA stricto sensu. Es un hecho administrativo, no una medida del shock económico: las cuentas se vacían 95% entre oct-2024 y ene-2026, pero los fondos no salen del sistema (ver §4.2).
 
-Hallazgo central. Las cuentas CERA caen 95% entre el peak y enero 2026. Pero el stock total de depósitos USD del SPNF (capítulos 315+316) **no cae** — sigue creciendo:
+### 4.2 La verdadera variable de tratamiento: depósitos USD totales del SPNF
+
+Las cuentas CERA caen 95% entre el peak y enero 2026. Pero el stock total de depósitos USD del SPNF (capítulos 315+316) **no cae** — sigue creciendo:
 
 | Mes | CERA (USD B) | Resto USD (USD B) | Total depósitos USD (USD B) |
 |---|---:|---:|---:|
@@ -204,9 +211,31 @@ Crucialmente, **la reclasificación CERA → depósito USD regular no cambia las
 
 La correlación entre la participación del banco en depósitos USD pre-shock (jun-2024) y la participación en CERA peak es muy alta: **Pearson 0.876, Spearman 0.891**. Los bancos que recibieron más CERA son esencialmente los mismos que ya tenían más depósitos USD antes del blanqueo. No hay sorpresa: los depositantes regularizan sus tenencias en el banco con el que ya operan.
 
-### 4.4 Asignación del flujo dentro del balance
+Esta tabla es invariante al horizonte porque los shares se calculan sobre el peak (oct-2024) y la composición pre-shock se calcula sobre jun-2024 — ambas fechas anteriores a cualquier macro-evento contaminante.
 
-Δ entre jun-2024 y ene-2026, en miles de millones de USD, suma de todos los bancos:
+### 4.4 Asignación del shock dentro del balance — ventana corta (ago-2024 → mar-2025)
+
+Esta es la ventana de interés para la identificación: pre-cepo, con el grueso del flujo CERA ya asignado y antes de que la salida del cepo (14-abr-2025) y la apreciación real cambien las decisiones de cartera por razones ajenas al shock.
+
+**TODO — recomputar en `code/analisis/01_Shock_Analysis.ipynb`** con corte en mar-2025 (último mes pre-cepo). Tabla esperada (suma sistema, USD B):
+
+| Canal | Δ (USD B) | % del Δ depósitos USD |
+|---|---:|---:|
+| Crédito a SPNF en ME (cap. 135) | TODO | TODO |
+| Efectivo y BCRA en ME (cap. 115, encaje) | TODO | TODO |
+| Títulos públicos en ME (cap. 125) | TODO | TODO |
+| Interbancario ME (cap. 136) | TODO | TODO |
+
+Métricas adicionales a recomputar para esta ventana: identidad de balance (cobertura % de los cuatro canales), descomposición del componente mecánico del encaje (25% × Δ depósitos vista ME) vs el residuo discrecional, share del Δ que va al menú 2.1 sin Tesoro USD vs con Tesoro USD.
+
+**Lectura esperada bajo cada uno de los tres canales del proyecto** (ver §1):
+- Si domina el **canal de destino regulado**: peso fuerte de cap. 135, especialmente sub-aperturas 135199/135499/135799 (prefinanciación de exportaciones).
+- Si domina el **canal de absorción financiera**: peso fuerte de cap. 125 (Tesoro USD) hasta tope 1/3, después spillover a cap. 136 (interbancario ME) o piso PGNME.
+- Si domina el **canal de sustitución de balance**: la asignación dentro del activo ME es residual/baja, y se observa expansión de crédito en pesos en bancos con más slack de capital ex-ante (no captado en esta tabla, requiere análisis por moneda cruzado).
+
+### 4.5 Evolución bajo el nuevo régimen cambiario — ventana larga (jun-2024 → ene-2026)
+
+Δ acumulado a 19 meses, suma de todos los bancos. **Esta tabla es descriptiva, no causal sobre el shock CERA**: el período incluye salida del cepo (14-abr-2025), apreciación real, disinflación y baja de tasas en pesos, todos eventos que reasignan cartera independientemente del shock CERA.
 
 | Canal | Δ (USD B) | % del Δ depósitos USD |
 |---|---:|---:|
@@ -215,18 +244,30 @@ La correlación entre la participación del banco en depósitos USD pre-shock (j
 | Títulos públicos en ME (cap. 125) | −3.1 | −14.5% |
 | Interbancario ME (cap. 136) | −0.3 | −1.3% |
 
-Identidad de balance: Δ depósitos USD del SPNF = USD 21.4 B; suma de Δ en los cuatro canales del activo ME = USD 19.7 B. **Cobertura del 91.8%**: los cuatro canales explican casi todo el aumento de depósitos USD.
+Identidad de balance: Δ depósitos USD del SPNF = USD 21.4 B; suma de Δ en los cuatro canales del activo ME = USD 19.7 B. Cobertura del 91.8%.
 
-**Descomposición regulatoria del +43% en encaje**:
+**Descomposición regulatoria del +43% en encaje** (válida en cualquier ventana, porque la regla del 25% es mecánica):
+- 25% del Δ depósitos vista ME va obligatoriamente a encaje BCRA en ME. Sobre Δ = USD 21.4 B son USD 5.35 B.
+- El residuo de USD 3.86 B (≈18% del Δ) es voluntario o por encaje sobre otros depósitos USD que también crecieron en el período.
 
-- 25% del shock va obligatoriamente a encaje BCRA en ME por la regla del 25% sobre depósitos a la vista en ME. Eso son USD 5.35 B.
-- El residuo de USD 3.86 B (≈18% del shock) es voluntario o por encaje sobre otros depósitos USD que también crecieron en el período.
+**Lectura del estado terminal**: 19 meses después del shock, el sistema bancario terminó con el +65% del Δ depósitos USD aplicado a crédito ME al SPNF y −14.5% en Tesoro USD. Es consistente con un equilibrio en el que (i) el banco trató el fondeo como persistente (ver §4.2), (ii) el tope 1/3 sobre Tesoro USD se volvió más binding al crecer la masa total de aplicaciones, y (iii) la demanda de crédito ME del sector transable estuvo activa durante el período. Pero **no es identificación**: cualquiera de esos resultados puede deberse al shock CERA o a la combinación cepo-cero/apreciación/disinflación que cambió precios relativos. Para separar las dos cosas, ver §4.4 (ventana corta) y §5 (estrategia formal).
 
-**Lectura económica del +65% al crédito ME**: los bancos aplican la mayor parte del shock a crédito a sectores generadores de divisas, dentro del menú obligatorio del régimen de Aplicación de Recursos en ME. **Hay efecto real directo vía aumento de crédito al sector transable**.
+### 4.6 Caveat de identificación: contaminación cross-section por el régimen Milei
 
-**Lectura de la caída del Tesoro USD (−14.5%)**: los bancos reducen su tenencia de Tesoro USD durante el shock. Posibles explicaciones (no excluyentes):
-- El tope del 1/3 sobre Tesoro USD se vuelve más restrictivo al crecer la masa total de aplicaciones ME (más depósitos ME exigen más activos ME, pero el tope es proporcional).
-- Reasignación voluntaria desde Tesoro hacia crédito a empresas exportadoras, dado que la demanda de crédito en ese sector estaba activa.
+La preocupación principal con la ventana larga no es un confounder agregado — eso se controlaría con efectos fijos de tiempo. Es que los macro-eventos post-cepo cargan **diferencialmente sobre los bancos** según las mismas características que determinaron quién recibió más CERA:
+
+- Bancos con más clientela exportadora ex-ante: más expuestos a la apreciación real (margen de exportación cae) **y** receptores naturales de CERA (clientela de mayor patrimonio USD).
+- Bancos con más posición en USD ex-ante: más expuestos a la unificación cambiaria parcial **y** correlación 0.88 con shares CERA peak.
+- Bancos con más fondeo mayorista vs minorista: más sensibles a la baja de tasas en pesos **y** distinta capacidad de sustitución cross-currency.
+
+Es decir, el confounder macro carga sobre el tratamiento por el mismo eje que el tratamiento mismo. No se arregla con FE de tiempo: requiere FE de tiempo × característica del banco, o cortar la ventana antes del 14-abr-2025. Por eso §4.4 corta en mar-2025 y §5 usa la misma ventana corta para el Paso 1.
+
+Eventos Milei a controlar/evitar dentro de la ventana del paper:
+- 14-abr-2025: salida del cepo cambiario para personas humanas; régimen de bandas para empresas.
+- 2024-Q4 a 2025-Q3: trayectoria de disinflación rápida (CPI mensual de >12% a <2%).
+- 2025: apreciación real fuerte del peso (>30% según métricas estándar).
+- 2024-2025: caída sostenida de tasas en pesos (BADLAR, plazos fijos minoristas).
+- ago-2023: cambio LELIQ → LEFI (anterior al shock pero relevante para cualquier especificación que use deuda BCRA en pesos como variable de control).
 
 ## 5. Diseño de identificación
 
