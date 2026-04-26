@@ -84,7 +84,78 @@ Las principales categorías son:
 6. **Construcción inmobiliaria** vía CECON.Ar (ya existente) en ciertos proyectos elegibles.
 7. **Pago de impuestos** (a través del sistema VEP de AFIP/ARCA).
 
-Implicancia para nosotros: el banco receptor **no presta con estos fondos directamente**. Los aplica a los destinos autorizados o los inmoviliza. Por lo tanto, el shock al activo bancario que buscamos medir **no es un aumento mecánico del crédito con fondos CERA**, sino un efecto de **relajamiento de restricciones de fondeo en moneda extranjera** (la vía Bartik): recibir depósitos USD grandes afloja el cumplimiento de PGNME y libera capacidad de préstamo USD fuera del circuito CERA.
+**Precisión importante**: la restricción a "destinos permitidos" es sobre el **titular** de la cuenta (el declarante), no sobre el **banco**. El declarante elige entre: dejar los fondos en CERA, transferirlos a otra CERA/comitente, aplicarlos a los destinos autorizados (bonos, FCIs, etc.), o retirarlos (con retención del 5%, salvo excepciones). No hay encaje 100% ni nada análogo sobre los saldos CERA.
+
+Desde la perspectiva del banco, el depósito CERA es un **depósito a la vista en ME como cualquier otro**, sujeto al régimen pre-existente de **Aplicación de Recursos en Moneda Extranjera** del BCRA.
+
+**Aclaración crítica sobre este régimen**: **no es específico de CERA**. Es regulación general que aplica a **todos los depósitos en ME** del sistema, sin excepción. Origen: Comunicación "A" 3827 del BCRA (julio 2002), post-crisis 2001-2002, con múltiples actualizaciones (texto ordenado OPRAC 1 y REMON 1). Alcance: cualquier banco que capte depósitos en ME, cualquiera sea el tipo de cliente (retail, mayorista, CERA, no-CERA, residente o no residente). El régimen no distingue el origen del depósito; distingue solo la moneda.
+
+Ese régimen restringe qué puede hacer el banco con **cualquier depósito ME**:
+
+1. **Préstamos en ME a sectores generadores de divisas** (capítulo 135): prefinanciación y financiación de exportaciones (135199/135499/135799), hipotecarios, documentos a sola firma y comprados.
+2. **Encaje en BCRA** en ME (cuenta 115015).
+3. **Tenencia de títulos públicos en ME** con tope (~1/3 del total de aplicaciones).
+4. **Operaciones interbancarias ME** y pases activos al BCRA en ME.
+
+El shock CERA opera entonces no como "dinero nuevo que el banco presta libremente" sino como:
+
+- **Mayor masa de pasivos ME disponible** para los destinos pre-autorizados. Típicamente reflota el crédito ME a exportadores (capítulo 135) y/o aumenta la tenencia de Tesoro USD (capítulo 125).
+- **Aumento del descalce ME (PGNME se vuelve más negativa)**: al recibir depósitos ME sin contraparte inmediata en activos ME, el ratio se acerca al piso regulatorio de −30% RPC, lo que obliga al banco a expandir activos ME.
+- **Volatilidad del fondeo**: los fondos CERA pueden moverse según la decisión del cliente. El banco sabe que no es fondeo "pegado" hasta el 31-dic-2025 a menos que el titular haya superado el umbral de USD 100.000.
+
+---
+
+## 5.bis Tratamiento prudencial específico de la CERA — verificación regulatoria
+
+Esta sección corrige y precisa dos puntos importantes sobre cómo trata la regulación a las CERA. Se elaboró tras revisar los textos ordenados vigentes del BCRA (TO Efectivo Mínimo, TO PGNME, TO Política de Crédito) en `docs/Regulation/`. Es importante porque hay literatura y borradores previos que asumen tratamientos prudenciales más laxos para la CERA de los que efectivamente tiene.
+
+### Encaje (Efectivo Mínimo)
+
+**Las cuentas CERA tienen encaje del 25%** sobre el saldo en moneda extranjera, no 0%.
+
+Texto vigente (TO Efectivo Mínimo, Com. "A" 8397, sección 7.5):
+
+> "Los depósitos en la 'Cuenta Especial de Regularización de Activos' –punto 3.16. del TO sobre Depósitos de Ahorro, Cuenta Sueldo y Especiales– **serán considerados como depósitos a la vista a los efectos de la exigencia de efectivo mínimo –punto 1.3.2.–**."
+
+La sección 1.3.2.2 (depósitos a la vista en moneda extranjera) fija una tasa del **25%** para todos los grupos de entidades (Grupo A y restantes).
+
+Donde sí hay encaje 0% es en la sección **1.3.15.2**:
+
+> "En dólares estadounidenses ('Cuentas especiales para acreditar financiación de exportaciones'). 0 0"
+
+Pero esa exención aplica a la cuenta `315791` (Cuenta Especial para Acreditar Financiación de Exportaciones), **no a las cuentas CERA Ley 27.743** (`311793`, `312183`, `315794`, `316147`). Es un beneficio histórico para fomentar la prefinanciación de exportaciones, anterior al blanqueo y conceptualmente distinto.
+
+**Consecuencia**: por cada USD adicional de depósito CERA, el banco debe inmovilizar mecánicamente 25 centavos en cuenta corriente del BCRA (cuenta 115015 del balance). Eso aporta una explicación parcial al aumento del encaje BCRA en ME observado durante el evento.
+
+### PGNME (Posición Global Neta en Moneda Extranjera)
+
+**Las cuentas CERA SÍ entran en el cómputo de la PGNME**. No están excluidas.
+
+Texto vigente (TO PGNME, Com. "A" 8360, sección 1.2 — Exclusiones):
+
+> "1.2.4. Los saldos correspondientes a las **'Cuentas especiales para titulares con actividad agrícola'** y a las **'Cuentas especiales para exportadores'**."
+
+Las cuentas excluidas son `311791` (agrícola) y `311792`/`315791` (exportadores). Las cuentas CERA no figuran en ninguna de las seis sub-secciones de exclusión (1.2.1 a 1.2.6).
+
+**Consecuencia**: recibir CERA aumenta el pasivo ME del banco sin contraparte inmediata en activo ME, **empujando el ratio PGNME hacia el piso regulatorio de −30% RPC**. El banco que recibe un shock grande de CERA está obligado por la PGNME a expandir activos ME (crédito a exportadores, Tesoro USD, encaje, interbancario ME) o reducir otros pasivos ME, para no quedar en infracción.
+
+### Tope de tenencia de Tesoro USD
+
+**Confirmado**. TO Política de Crédito (Com. "A" 8202), sección 2.1.14:
+
+> "Instrumentos de deuda en moneda extranjera del Tesoro Nacional, **por hasta el importe equivalente a un tercio del total de las aplicaciones realizadas conforme a lo previsto en esta sección**."
+
+Es un kink regulatorio que limita cuánto del fondeo ME puede aplicarse al Tesoro USD. Por encima del tope, el banco debe redirigir a otros destinos del menú (crédito a exportadores, encaje, interbancario).
+
+### Implicancia integrada para la interpretación de los resultados empíricos
+
+La asignación observada del shock CERA entre los cuatro canales del activo ME está moldeada por tres restricciones binding simultáneas:
+
+1. **Encaje obligatorio del 25%**: 25 centavos de cada dólar van automáticamente a la cuenta 115015 (BCRA cuenta corriente ME). Componente mecánico, no discrecional.
+2. **PGNME piso −30% RPC**: el resto de los dólares debe asignarse a algún activo ME para no profundizar el descalce.
+3. **Tope un tercio para Tesoro USD**: limita cuánto del residuo puede ir a títulos públicos en ME.
+
+El crédito ME a SPNF (capítulo 135) y el interbancario ME (capítulo 136) son los destinos sin tope cuantitativo. Por exclusión de los demás canales, son los que tienden a absorber el grueso del shock cuando los topes binden.
 
 ---
 
@@ -144,16 +215,43 @@ Lista corta de fechas que **todo diseño de event study debe incorporar explíci
 
 ---
 
+## 7.bis Persistencia del shock: CERA se transforma en depósitos USD "normales"
+
+Hallazgo empírico durante la construcción del panel. El saldo específico de las cuatro cuentas CERA **cae 95% entre el peak (oct-2024, USD 11.9B) y ene-2026 (USD 0.6B)**. Durante el mismo período, el **stock total de depósitos USD del sector privado no financiero (capítulos 315+316) no cae, sino que sigue creciendo**:
+
+| Mes | CERA (USD B) | Resto USD (USD B) | Total depósitos USD (USD B) |
+|---|---:|---:|---:|
+| jun-2024 (pre) | 0.0 | 20.0 | 20.0 |
+| sep-2024 (peak CERA) | 11.7 | 22.1 | 33.8 |
+| oct-2024 | 11.9 | 25.1 | 37.0 |
+| dic-2024 | 5.8 | 28.3 | 34.1 |
+| jun-2025 | 3.0 | 30.6 | 33.7 |
+| dic-2025 | 2.3 | 37.7 | 40.0 |
+| ene-2026 | 0.6 | 40.8 | 41.4 |
+
+Mientras las cuentas CERA se vacían, las cuentas USD "no-CERA" del capítulo 315+316 crecen de USD 22.1B a USD 40.8B (+85%) en el mismo período. Los dólares no salieron del sistema bancario: **se reclasificaron dentro del mismo balance**, de la cuenta CERA específica (311793/312183/315794/316147) a cuentas USD regulares (cajas de ahorro ME, cuentas corrientes ME, plazos fijos ME) dentro del mismo capítulo.
+
+Esto tiene sentido económico: una vez vencidas las restricciones de indisponibilidad (31-oct-2024 para Etapa 1) y especialmente después del **31-dic-2025** (fecha de liberación sin retención del 5%), los titulares transfirieron los fondos de la cuenta CERA a una cuenta USD regular del mismo banco. La retención del 5% aplica a fondos retirados antes del 31-dic-2025; una transferencia entre cuentas del mismo titular dentro del mismo banco **no** la dispara.
+
+**Implicancias para el paper**:
+
+1. La variable de tratamiento **no debe ser "saldo CERA peak"** sino **"aumento de depósitos USD por encima del contrafactual"**. CERA es el nombre administrativo del flujo inicial; lo que importa económicamente es la masa total de depósitos USD adicionales disponibles para aplicar.
+2. El shock es **permanente, no transitorio**. Los dólares siguen en el sistema 15+ meses después del peak.
+3. El event study tradicional ±12 meses alrededor de ago-2024 es probablemente una mala especificación: supone un shock que se revierte, cuando en realidad el shock persiste.
+4. La magnitud final del tratamiento, medida como incremento de depósitos USD totales del sistema respecto a la tendencia pre-shock, es de **≈USD 21B incrementales** (en línea con los USD 22B declarados públicamente).
+5. La reclasificación CERA → depósito USD regular **no cambia las exigencias regulatorias relevantes**: ambos son "depósitos a la vista en moneda extranjera", encajan al 25% (sec. 1.3.2.2 Efectivo Mínimo), y entran en PGNME. La continuidad del tratamiento prudencial es lo que sostiene la persistencia del efecto sobre la asignación del activo ME del banco.
+
 ## 8. Qué significa todo esto para nuestra estrategia empírica
 
 1. **Shock a nivel banco**: cuatro cuentas CERA en `bal_hist`. Se puede construir de manera limpia y directa.
 2. **Heterogeneidad banco × banco**: el ingreso de depósitos CERA no es homogéneo — bancos con mayor presencia USD previa captaron más. Esto **es** nuestra variable de intensidad de tratamiento `γ̂_b` del Paso 1 del Greenstone-Mas-Nguyen.
-3. **Mecanismo del lending channel**: el depósito CERA **no financia crédito directo** (por restricciones de aplicación). El efecto pasa por:
-   - Aflojamiento de **PGNME** (recibir USD sin contraparte prestada en USD acerca a la banca al piso de −30% RPC del régimen PGN).
-   - Cambio en la **composición del fondeo** (mayor ponderación de depósitos ME sobre depósitos pesos).
-   - Señalización de mayor **liquidez** que afecta el costo de fondeo agregado.
+3. **Mecanismo del lending channel**: el depósito CERA **sí puede financiar crédito en ME**, pero solo dentro del menú del régimen de Aplicación de Recursos en ME (sección 2.1 del TO Política de Crédito). La asignación a cada destino del menú está además acotada por:
+   - **Encaje obligatorio del 25%** sobre la propia CERA (sec. 7.5 + 1.3.2.2 del TO Efectivo Mínimo). Componente mecánico del shock al activo del banco.
+   - **PGNME**: las CERA aumentan el pasivo ME, profundizando el descalce hacia el piso −30% RPC. El banco está obligado a expandir activos ME para compensar.
+   - **Tope de Tesoro USD** en un tercio de las aplicaciones (sec. 2.1.14 TO Política de Crédito). Limita la capacidad de absorber el shock vía deuda pública en moneda extranjera.
 4. **Heterogeneidad entre declarantes**: el umbral USD 100.000 genera dos poblaciones de depósitos CERA con dinámicas distintas (rotación rápida vs atado). Si pudiéramos separarlos (no es obvio desde el balance consolidado), sería una fuente extra de variación.
 5. **Convivencia con regulación que cambia**: la ventana contiene cambios normativos (A 8090, 8106, 8110, 8123) que afectaron las reglas del juego *durante* el evento. **Hay que controlar por ellas** en el event study para no confundir efectos del shock con efectos de flexibilizaciones regulatorias.
+6. **Hipótesis alternativa Diamond-Dybvig**: los bancos pueden percibir las CERA como fondeo más volátil que los depósitos USD orgánicos (motivos no transaccionales del depositante, sensibilidad a la fecha 31-dic-2025). En ese caso asignarían los fondos a activos más líquidos (encaje voluntario por encima del 25% obligatorio) en lugar de crédito de mayor duración. Testeable cruzando ratio CERA / depósitos USD totales del banco con la composición temporal del activo ME.
 
 ---
 
