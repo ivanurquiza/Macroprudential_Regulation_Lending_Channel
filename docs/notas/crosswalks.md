@@ -68,17 +68,47 @@ Para construir el segundo, necesitamos saber qué fusiones hubo. Eso vive en est
 
 Inspección manual de los archivos `Info_Hist/Activas/*.txt` e `Info_Hist/Bajas/*.txt` del dump 202601 (las "leyendas históricas" que cada archivo trae), priorizando los eventos que caen en la ventana 2020+ del paper.
 
-### Eventos relevantes para la ventana del paper (2020+)
+### Distinción crítica: fecha legal vs fecha contable
 
-Marcados con `CAE EN VENTANA 2020+` en la columna `nota`:
+La leyenda histórica del BCRA registra la **fecha del acto societario** (publicación en Boletín Oficial, resolución del BCRA, etc.), que no coincide con el momento en que el absorbido **deja de reportar balance separado**. En la práctica observamos que:
 
-1. **Galicia absorbe HSBC Argentina** (dic-2024). HSBC vendió su negocio retail en Argentina a Galicia. Cae justo en la ventana del event study del blanqueo. Hay que verificar la fecha exacta de cierre operativo (la fecha de anuncio fue abr-2024, el cierre operativo posterior).
-2. **Galicia cambio de SAU a SA** (jun-2025). Cambio formal de denominación, no fusión.
-3. **Banco Macro absorbe Banco BMA SAU** (nov-2024). Operación dentro del grupo.
+- El absorbido deja de reportar **uno o dos meses antes** de la fecha legal (presumiblemente porque la operación ya está administrativamente consolidada).
+- El absorbente muestra **el salto de saldos en el mes en que el absorbido dejó de reportar** (es el primer balance consolidado).
+
+Por eso `fusiones.csv` tiene tres columnas temporales: `fecha_legal`, `fecha_ultimo_balance_absorbido` y `fecha_primer_balance_consolidado`. Para construir el panel pro-forma usamos `fecha_ultimo_balance_absorbido` como corte.
+
+### Eventos que caen dentro de la ventana 2020+ (columna `cae_en_ventana_blanqueo`)
+
+**1. Galicia absorbe HSBC Argentina / Banco GGAL** — `cae_en_ventana_blanqueo = parcial`
+
+Timeline verificado contra el panel de balance:
+- 12-sep-2024: Galicia + Grupo Galicia adquieren 99.99% de HSBC (**cambio de control, no fusión**; HSBC sigue operando como entidad independiente con código 00150).
+- 20-dic-2024: HSBC cambia de denominación a "Banco GGAL S.A." (solo nombre; sigue reportando balance separado).
+- Mayo-2025: último balance separado de Banco GGAL (código 00150).
+- 23-jun-2025: fusión legal por absorción.
+- Julio-2025: primer balance consolidado en Galicia (saltos de ~+21.7% en depósitos USD).
+
+**Conclusión para el paper**: durante toda la Etapa 1 del blanqueo (jul-oct 2024) y la mayor parte de Etapa 2/3, HSBC/GGAL es entidad **independiente**. No hay contaminación de la señal CERA. El cuidado hay que tenerlo solo para análisis que extiendan la ventana más allá de jun-2025.
+
+**2. Banco Macro absorbe Banco BMA SAU** — `cae_en_ventana_blanqueo = SI` — **CASO CRÍTICO**
+
+Timeline:
+- 05-ene-2024: cambio de control (Itaú Argentina pasa a Macro, se renombra Banco BMA SAU).
+- Octubre-2024: BMA deja de reportar balance separado.
+- 19-nov-2024: fusión legal por absorción.
+
+**Observación preocupante**: Macro muestra un salto del **+118% en depósitos USD en sep-2024**, muy por encima del de cualquier otro banco comparable. Esto **no se explica solo por flujo CERA** (Macro tiene ~11% del pico CERA, que serían ~USD 1.4B adicionales; pero el salto en depósitos USD es de ~USD 1.4T nominal, que convertido al TC de sep-2024 da casi todo el aumento de depósitos USD).
+
+El salto de Macro sep-nov 2024 es una **mezcla de flujo CERA genuino + absorción pre-fusión de saldos de BMA**. Requiere tratamiento especial en el análisis:
+- **Opción 1**: excluir Macro de la muestra principal. Pérdida: es banco grande, 11% del CERA.
+- **Opción 2**: construir un "Macro pro-forma" restando los saldos de BMA del dump de sep-2024 retroactivamente. Requiere el último balance disponible de BMA (oct-2024 o dic-2023).
+- **Opción 3**: usar Macro solo en regresiones de "panel consolidado pro-forma" y no en las de "bank-as-is".
+
+**3. Galicia cambio de denominación de SAU a SA** (jun-2025) — solo cambio formal de nombre. No afecta nada operativo.
 
 ### Eventos pre-2020 (informativo)
 
-Documentados pero menos críticos (no afectan la ventana del event study). Sirven para entender la historia del sistema bancario argentino.
+Documentados pero no críticos para la ventana del event study del blanqueo 2024. Sirven para la robustez con el blanqueo Macri 2016-17 y para la historia del sistema bancario argentino.
 
 ### Cuestiones pendientes
 
