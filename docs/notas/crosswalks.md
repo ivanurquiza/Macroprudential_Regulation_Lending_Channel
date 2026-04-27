@@ -6,52 +6,108 @@ Documenta el contenido y la lógica detrás de los archivos de `data/external/cr
 
 ### Por qué existe
 
-El plan de cuentas BCRA tiene 5,519 cuentas. Las categorías económicas que aparecen en una regresión típica son ~20 ("crédito USD al sector privado", "depósitos CERA", etc.). Hay que mapear el primero al segundo, y este mapeo es:
+El plan de cuentas BCRA tiene 5,519 cuentas. Las categorías económicas que aparecen en una regresión típica son ~20 ("crédito USD al sector privado", "depósitos CERA", etc.). Hay que mapear el primero al segundo.
 
-1. **Una decisión de investigador** (qué cuentas conforman cada concepto).
-2. **No invertible automáticamente** desde el plan: requiere leer las denominaciones, conocer la regulación BCRA y a veces el contexto histórico (por ejemplo, saber que LELIQ y LEFI son "lo mismo" en períodos distintos).
+### Aclaración crítica sobre la fuente del mapeo
 
-Por eso vive como CSV editable, no como código Python.
+**El BCRA no publica un mapeo formal entre el plan de cuentas (`cuentas.txt`) y los destinos del régimen de Aplicación de Recursos en ME ni con cualquier otro régimen regulatorio.** Los textos ordenados (Política de Crédito, PGNME, Efectivo Mínimo) usan **lenguaje económico** ("prefinanciación de exportaciones", "Tesoro en moneda extranjera", "depósitos a la vista en ME") sin referirse a códigos del plan de cuentas. El Régimen Informativo Contable Mensual de Efectivo Mínimo y Aplicación de Recursos (Com. A 8420, sec. 6.3) tiene su **propio sistema de "partidas"** (100000, 750000, 903000, etc.) que **no son** los códigos del plan de cuentas (135799, 115015, etc.). El balance resumido `balres` consolida pesos y ME, sin permitir desagregado por moneda × destino.
 
-### Categorías definidas en v1
+Como consecuencia, el mapeo en este crosswalk se construye sobre **dos tipos de fuente**:
 
-Lista completa con su justificación. La columna "fuente" indica de dónde sale la decisión metodológica (proposal, paper de referencia, normativa BCRA).
+- **`denominacion_explicita`**: la denominación literal de la cuenta en `cuentas.txt` replica casi textualmente el lenguaje del TO regulatorio. Caso típico: la cuenta `135799` se llama "PR.PREFINANC.Y FINANC.EXPORT.", y el art. 2.1.1 del TO Política de Crédito habla de "prefinanciación y financiación de exportaciones". El mapeo es directo aunque inferencial.
+- **`inferencia_capitulo`** o **`inferencia_subcuenta`**: el mapeo se infiere por la estructura jerárquica del plan, sin denominación literal coincidente. Ejemplo: el capítulo 115 entero como "efectivo y depósitos en ME" (pero el BCRA no dice formalmente que `115%` corresponde al "canal de encaje" del régimen).
+
+La columna `fuente_mapeo` del CSV indica para cada par cuál es el caso. Esto es importante para auditoría: las inferencias son razonables pero deberían poder cuestionarse.
+
+### Estructura del plan de cuentas relevante
+
+El activo en moneda extranjera (residentes en el país) se organiza en cuatro capítulos principales:
+
+| Capítulo | Concepto |
+|---|---|
+| `115` | Efectivo y depósitos en bancos en ME |
+| `125` | Títulos públicos y privados en ME |
+| `135` | Préstamos en ME a residentes en el país |
+| `145` / `155` / `175` | Otros créditos por intermediación financiera, leasing, créditos diversos en ME |
+
+Y separadamente, los préstamos en ME a residentes del exterior viven en el capítulo `136` (no en `135`).
+
+Dentro del capítulo `135`, las sub-cuentas están organizadas por **sector del prestatario**:
+
+| Sub-cuenta | Sector |
+|---|---|
+| `1351xx` | Sector Público No Financiero (SP) |
+| `1352xx` | Intereses SP |
+| `1353xx` | Previsiones SP (regularizadoras) |
+| `1354xx` | Sector Financiero (interbancario doméstico ME) |
+| `1355xx` | Intereses SF |
+| `1356xx` | Previsiones SF |
+| `1357xx` | Sector Privado No Financiero (SPNF) |
+| `1358xx` | Intereses SPNF |
+| `1359xx` | Previsiones SPNF |
+
+**Corrección de versión anterior del crosswalk**: en versiones previas, este documento mapeaba `interbancario_me` al capítulo `136`. Eso era incorrecto. El interbancario doméstico en ME vive en `1354xx`-`1356xx`. El capítulo `136` corresponde a préstamos crossborder (a residentes del exterior), un destino distinto del menú regulatorio (sec. 2.1.16 y 2.1.17 del TO Política de Crédito).
+
+### Categorías principales (v2)
+
+#### Lado pasivo — el shock CERA
+
+| Categoría | Cuentas | Fuente del mapeo |
+|---|---|---|
+| `cera_total` | 311793 + 312183 + 315794 + 316147 | denominación explícita; coincide literalmente con Com. A 8071 |
+| `cera_ars` | 311793 + 312183 | denominación explícita |
+| `cera_me` | 315794 + 316147 | denominación explícita (★ 315794 captura 96.6% del peak) |
+| `deposito_me_spnf_total` | Capítulo 315 entero | inferencia capítulo (incluye CERA + cuentas exportadores + depósitos USD regulares) |
+| `deposito_me_spnf_exterior` | Capítulo 316 entero | inferencia capítulo |
+
+#### Lado activo — los cuatro canales del régimen de Aplicación de Recursos en ME
 
 | Categoría | Cuentas | Fuente |
 |---|---|---|
-| `cera_total` | 311793 + 312183 + 315794 + 316147 | Com. "A" 8071 BCRA. Ver `docs/notas/cera_regimen.md`. Tratamiento bruto del shock del blanqueo. |
-| `cera_ars` / `cera_me` | Subset de las anteriores por moneda | Útil para separar el efecto del shock por dolarización del depositante. |
-| `cera_residente_pais` / `cera_residente_exterior` | Subset por residencia del titular | Para distinguir el shock que viene del blanqueo doméstico vs. repatriación de fondos del exterior. |
-| `credito_ars_spnf` | Capítulo 131 completo | Crédito al sector privado en pesos. Variable de respuesta del lending channel doméstico. |
-| `credito_me_spnf` | Capítulo 135 completo | Crédito al sector privado en moneda extranjera. **Variable principal del paper**: el blanqueo aumenta los depósitos USD y la pregunta es si eso se traduce en crédito USD al sector real. |
-| `credito_me_prefinanc_export` | 135199, 135499, 135799 | Prefinanciación y financiación de exportaciones. Subset de capítulo 135 que va específicamente a transables (test del canal). |
-| `credito_me_documentos_sola_firma` | 135115 | Sub-apertura adicional de capítulo 135. |
-| `credito_me_documentos_comprados` | 135121 | Idem. |
-| `credito_me_hipotecarios` | 135108 | Idem. |
-| `deposito_ars_spnf` | Capítulo 311 completo | Depósitos pesos residentes país (incluye CERA pesos y otras especiales). |
-| `deposito_me_spnf` | Capítulo 315 completo | Depósitos USD residentes país (incluye CERA USD y otras especiales). |
-| `deposito_ars_spnf_exterior` | Capítulo 312 | Depósitos pesos de no residentes (incluye CERA pesos exterior). |
-| `deposito_me_spnf_exterior` | Capítulo 316 | Depósitos USD de no residentes (incluye CERA USD exterior). |
-| `deposito_me_cuenta_exportadores` | 315791 | Cuenta especial para acreditar financiación de exportaciones — para distinguir del shock CERA. |
-| `titulos_publicos_ars` | Capítulo 121 completo | Tenencias de títulos públicos en pesos (incluye Tesoro y deuda BCRA). |
-| `titulos_publicos_me` | Capítulo 125 completo | Tenencias de títulos públicos en ME (incluye Tesoro USD y Letras BCRA en ME). Crítico para el test del kink del tope de aplicaciones ME en Tesoro. |
-| `leliq` | 121056, 121057, 121058 | Letras del BCRA — vigentes hasta agosto 2023. |
-| `lefi` | 121091, 121092, 121093 | Letras Fiscales de Liquidez — vigentes desde agosto 2023. Reemplazaron a las LELIQ. |
-| `letras_bcra_otros` | 121024, 121025, 121026, 121041 | Otras Letras BCRA. |
-| `deuda_bcra_pesos` | Unión temporal de LELIQ + LEFI + Letras BCRA varias | **Categoría continua**: "deuda BCRA en pesos en cualquier momento". Resuelve la discontinuidad LELIQ→LEFI. |
-| `interbancario_ars` | Capítulo 132 | Operaciones interbancarias en pesos (call entre EEFF, pases). |
-| `interbancario_me` | Capítulo 136 | Operaciones interbancarias en moneda extranjera. |
-| `encajes_proxy_ars` | 111015, 111025 | **Proxy de integración de Efectivo Mínimo en pesos** (saldos en BCRA cuenta corriente). Ver `metodologia_paneles.md` §3.7 y `cera_regimen.md` §8. |
-| `encajes_proxy_me` | 115015 | Proxy de integración de Efectivo Mínimo en ME. |
-| `patrimonio_neto_proxy` | 400000 + 500000 + 650000 | **Proxy de RPC** (Responsabilidad Patrimonial Computable). PN contable = Patrimonio neto básico + Resultados + ORI. |
-| `activos_me_total` | 115% + 116% + 125% + 126% + 135% + 136% | Suma de activos en moneda extranjera. **Componente del proxy de PGNME** (activos ME menos pasivos ME, sobre RPC). |
-| `pasivos_me_total` | 315% + 316% + 325% + 326% | Suma de pasivos en moneda extranjera. **Componente del proxy de PGNME**. |
+| `canal_encaje_efectivo_me` | Capítulo 115 entero | inferencia capítulo (canal del menú regulatorio) |
+| `encaje_bcra_me_estricto` | 115015 + 115017 + 115025 | denominación explícita (subset estricto del encaje) |
+| `canal_titulos_publicos_me` | Capítulo 125 entero | inferencia capítulo |
+| `tesoro_usd` | 125003 + 125016 + 125042 + 125090 | denominación explícita ("Títulos Públicos") |
+| `letras_notas_bcra_me` | 125036, 125038-125044, 125058, 125059 | denominación explícita ("Letras BCRA", "Notas BCRA", "LEDIV", "NODO") |
+| `canal_credito_me_residentes_pais` | Capítulo 135 entero | inferencia capítulo |
+| `credito_me_spnf` | 1357% + 1358% (capitales + intereses) | inferencia subcuenta (denominación de 135700 dice "SECTOR PRIVADO NO FIN") |
+| `credito_me_sf_interbancario_domestico` | 1354% + 1355% | inferencia subcuenta (denominación de 135400 dice "SECTOR FINANCIERO") |
+| `credito_me_sector_publico` | 1351% + 1352% | inferencia subcuenta |
+| `prefinanc_export_total` | 135199 + 135499 + 135799 | denominación explícita ("PR.PREFINANC.Y FINANC.EXPORT.") |
+| `canal_credito_me_crossborder` | Capítulo 136 entero | inferencia capítulo (préstamos a residentes del exterior, sec. 2.1.16-2.1.17 menú) |
+
+#### Sub-aperturas relevantes del SPNF en ME
+
+| Categoría | Cuenta | Concepto |
+|---|---|---|
+| `prefinanc_export_total` | 135799 | ★ destino primario sec. 2.1.1 |
+| `credito_me_documentos_sola_firma_spnf` | 135715 | crédito comercial SPNF |
+| `credito_me_documentos_comprados_spnf` | 135721 | crédito comercial SPNF |
+| `credito_me_hipotecarios_spnf` | 135708 | hipotecarios SPNF |
+| `credito_me_creditos_documentarios` | 135133 | financiación de comercio exterior |
+
+#### Cuentas especiales (no son CERA pero comparten estructura)
+
+| Categoría | Cuenta | Tratamiento prudencial |
+|---|---|---|
+| `deposito_me_cuenta_exportadores` | 315791 | encaje 0% (TO Efectivo Mínimo sec. 1.3.15.2); excluida de PGNME |
+| `deposito_ars_cuenta_exportadores` | 311792 | encaje 3.5% (sec. 1.3.15.1); excluida de PGNME |
+| `deposito_ars_cuenta_agro` | 311791 | encaje 3.5%; excluida de PGNME |
+
+#### Proxies regulatorios construidos desde el balance
+
+| Categoría | Cuentas | Uso |
+|---|---|---|
+| `patrimonio_neto_proxy` | 400000 + 500000 + 650000 | Proxy de RPC (responsabilidad patrimonial computable) |
+| `activos_me_total_pgnme` | 115% + 116% + 125% + 126% + 135% + 136% + 145% + 146% + 155% + 175% | Componente activos ME del proxy PGNME |
+| `pasivos_me_total_pgnme` | 315% + 316% + 325% + 326% | Componente pasivos ME del proxy PGNME |
+| `deuda_bcra_pesos_unificada` | 121024-121026, 121041, 121056-121058, 121091-121093 | Unión temporal LELIQ + LEFI + otras Letras BCRA en pesos |
 
 ### Cuestiones pendientes
 
-- **Regularizadoras**: el campo `nota` aclara cuándo una categoría incluye o excluye las cuentas regularizadoras. Para variables que miden saldo neto (crédito neto de previsiones, por ejemplo), hay que restarlas en el notebook de análisis usando `dim_cuentas.es_regularizadora`. Por defecto el panel largo no las consolida.
-- **Cuentas-madre vs hojas**: cuando una categoría se define como `135%`, el join con el panel matchea todas las cuentas-hoja del capítulo 135. Si en `bal_hist` el BCRA reporta saldo en la cuenta-madre `135000` (improbable pero posible), también se agrega. Hay que cuidar de no doble-contar (típicamente las cuentas-madre tienen saldo cero porque solo las hojas reportan, pero conviene chequear).
-- **Cobertura del capítulo**: para `credito_me_spnf = 135%`, asumimos que TODO el capítulo 135 es relevante. Si en una regresión específica querés excluir, por ejemplo, los préstamos a entidades financieras del exterior que estén dentro del capítulo, hay que ajustar.
+- **Regularizadoras**: el campo `nivel = detalle` o `principal` del CSV indica si la categoría puede contener regularizadoras. Para variables que miden saldo neto (crédito neto de previsiones), hay que restar las cuentas con `dim_cuentas.es_regularizadora = True` en el notebook de análisis.
+- **Cuentas-madre vs hojas**: cuando una categoría se define como `135%`, el join LIKE matchea todas las cuentas-hoja del capítulo. Las cuentas-madre típicamente tienen saldo cero (solo reportan las hojas) pero conviene validar.
+- **Cobertura post-régimen**: si nuevas cuentas se dan de alta (como `121091`-`121093` para LEFI en 2023), hay que actualizar el crosswalk explícitamente. El plan no avisa.
 
 ## 2. `fusiones.csv` — eventos institucionales
 
